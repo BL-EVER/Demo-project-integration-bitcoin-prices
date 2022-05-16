@@ -2,6 +2,7 @@ import React from 'react';
 import * as brain from "brain.js";
 import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 import {Button} from "@mui/material";
+import useApi from "../hooks/useApi";
 
 Date.prototype.addDays = function(days) {
     var date = new Date(this.valueOf());
@@ -25,7 +26,8 @@ function denormalize(min, max) {
 //[5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(normalize(5, 15))
 //[5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(normalize(5, 15)).map(denormalize(5, 15))
 
-const ForecastPrices = ({data}) => {
+const ForecastPrices = () => {
+    const data = useApi();
 
     const [forecast, setForecast] = React.useState([]);
     const myRef = React.useRef(null);

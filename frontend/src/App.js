@@ -1,16 +1,26 @@
 import ShowcasePrices from "./Components/ShowcasePrices";
-import useApi from "./hooks/useApi";
 import Header from "./Components/Header";
-import ForecastPrices from "./Components/ForecastPrices";
+import {UserProvider} from "./context/UserContext";
+import {ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import Content from "./Content";
 
 function App() {
-    const data = useApi();
   return (
-    <div>
+    <UserProvider>
         <Header />
-        <ShowcasePrices data={data}/>
-        <ForecastPrices data={data} />
-    </div>
+        <Content />
+        <ToastContainer
+            position="bottom-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover={false}/>
+    </UserProvider>
   );
 }
 

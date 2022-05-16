@@ -1,8 +1,10 @@
 import React from 'react';
 import {CartesianGrid, Legend, Line, ResponsiveContainer, XAxis, YAxis, LineChart, Tooltip} from "recharts";
+import useApi from "../hooks/useApi";
 
 
-const ShowcasePrices = ({data}) => {
+const ShowcasePrices = () => {
+    const data = useApi();
     return (
         <div style={{width: '90%', height: '600px', marginLeft: 'auto', marginRight: 'auto'}} key="showcase">
             <ResponsiveContainer width="100%" height="100%">

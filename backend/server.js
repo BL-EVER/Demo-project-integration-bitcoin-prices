@@ -1,41 +1,42 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-var axios = require('axios');
+const morgan = require('morgan');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const app = express();
 
+/* Middleware for express */
 app.use(cors());
 app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(morgan("combined"));
 
-const PORT = 3001;
+/* Routes */
+app.use("/api/auth", require("./routes/authenticationRoutes"));
+app.use("/api/", require("./routes/dataRoutes"));
 
-//https://docs.cloud.coinbase.com/exchange/reference/exchangerestapi_getproductcandles
-app.get('/api/', async (req, res) => {
-    await axios.get('https://api.pro.coinbase.com/products/BTC-USD/candles?granularity=86400&start=2021-01-09T12:00:00')
-        .then(function(response) {
-            //console.log(response.data);
-            res.send(response.data.map(
-                ([timestamp, price_low, price_high, price_open, price_close]) =>
-                    ({ timestamp: new Date(timestamp * 1000).toLocaleDateString(), price: (price_low + price_high) / 2 })
-                )
-            );
-        })
-        .catch(e => {
-            res.send(e);
-        });
-})
-
+/* Serve static files */
 const path = require('path');
-
-// Serve the static files from the React app
 app.use(express.static(path.join(__dirname, 'build')));
-
 app.get('*', (req,res) =>{
     res.sendFile(path.join(__dirname+'/build/index.html'));
 });
 
+/* MongoDB connection */
+const db = require("./models");
+db.mongoose.connect(process.env.MONGO_URL).catch(error => {
+    console.log(`Cannot connect to the database ${process.env.MONGO_URL} `, error);
+    process.exit();
+});
+console.log(`Connected to the database ${process.env.MONGO_URL}`);
+db.mongoose.connection.on('error', error => {
+    console.log(`Database error from ${process.env.MONGO_URL} `, error);
+});
+
+/* App connection */
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-    console.log(`Server listening at http://localhost:${PORT}`)
+    console.log(`Server listening at port ${PORT}`)
 })
